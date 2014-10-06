@@ -17,15 +17,42 @@
         android:layout_marginBottom="@dimen/standard_vertical_spacing"
         android:textStyle="bold"
         android:text="Address:"
-        android:gravity="center_vertical">
+        android:gravity="bottom">
     </TextView>
 
-    <EditText
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/standard_height" />
+        android:layout_height="@dimen/standard_height"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="@dimen/standard_vertical_spacing"
+        android:layout_marginBottom="@dimen/standard_vertical_spacing"
+        android:paddingTop="@dimen/standard_vertical_spacing"
+        android:paddingBottom="@dimen/standard_vertical_spacing">
 
-    
+        <EditText
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            />
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_search"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/"
+            android:onClick="searchAddress"/>
 
+        </LinearLayout>
+
+    <com.google.android.gms.maps.MapView
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/standard_vertical_spacing"
+        android:layout_marginBottom="@dimen/standard_vertical_spacing">
+
+        </com.google.android.gms.maps.MapView>
 
     </LinearLayout>
