@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="standard_height">48dp</dimen>
+    <dimen name="standard_vertical_spacing">4dp</dimen>
+    <dimen name="standard_horizontal_spacing">8dp</dimen>
+    <dimen name="standard_major_indent">16dp</dimen>
+
+</resources>
