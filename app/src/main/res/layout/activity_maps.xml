@@ -10,7 +10,7 @@
     android:name="com.google.android.gms.maps.SupportMapFragment" >
 
     <TextView
-        android:id="@+id/textview_address"
+        android:id="@+id/textView_addressPrompt"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/standard_height"
         android:layout_marginTop="@dimen/standard_vertical_spacing"
@@ -34,19 +34,20 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            />
+            android:id="@+id/editText_addressForm" />
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_search"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/"
+            android:id="@+id/imageView_search"
             android:onClick="searchAddress"/>
 
         </LinearLayout>
 
     <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView_map"
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_height="0dp"
