@@ -16,7 +16,7 @@
         android:layout_marginTop="@dimen/standard_vertical_spacing"
         android:layout_marginBottom="@dimen/standard_vertical_spacing"
         android:textStyle="bold"
-        android:text="Address:"
+        android:text="ADDRESS:"
         android:gravity="bottom">
     </TextView>
 
@@ -41,19 +41,26 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_search"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/imageView_search"
-            android:onClick="searchAddress"/>
+            android:id="@+id/imageView_search"/>
 
         </LinearLayout>
 
-    <com.google.android.gms.maps.MapView
+    <!--<com.google.android.gms.maps.MapView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_weight="1"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_marginTop="@dimen/standard_vertical_spacing"-->
+        <!--android:layout_marginBottom="@dimen/standard_vertical_spacing">-->
+
+        <!--</com.google.android.gms.maps.MapView>-->
+
+    <fragment
         android:id="@+id/mapView_map"
         android:layout_width="match_parent"
-        android:layout_weight="1"
         android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="@dimen/standard_vertical_spacing"
-        android:layout_marginBottom="@dimen/standard_vertical_spacing">
-
-        </com.google.android.gms.maps.MapView>
+        android:layout_marginBottom="@dimen/standard_vertical_spacing"
+        class="com.google.android.gms.maps.MapFragment" />
 
     </LinearLayout>

@@ -1,41 +1,28 @@
 package geocoding.reynolds.ee461l.utexas.edu.geocoding;
 
-import android.location.Address;
-import android.location.Geocoder;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
-public class MapsActivity extends FragmentActivity {
+public class MapsActivity extends Activity {
 
-    com.google.android.gms.maps.MapView mapView;
-    String APIkey = "AIzaSyCEjmzkWPOxEj8r_kDM2sX6w9qmY50WlSw";
+    MapView mapView;
+    String APIkey = "AIzaSyALzlkKlBlVv95h4zG7laoB1Gwqg71Smjw";
     String geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     String geocodeURLTail = "&key=";
 
@@ -43,7 +30,8 @@ public class MapsActivity extends FragmentActivity {
     ImageView searchButton;
     GoogleMap map;
 
-    // private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    static final LatLng HAMBURG = new LatLng(53.558, 9.927);
+    static final LatLng KIEL = new LatLng(53.551, 9.993);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,27 +41,23 @@ public class MapsActivity extends FragmentActivity {
 
         addressForm = (EditText) findViewById(R.id.editText_addressForm);
         searchButton = (ImageView) findViewById(R.id.imageView_search);
-        mapView = (MapView) findViewById(R.id.mapView_map);
 
-        // Why?
-        mapView.onCreate(savedInstanceState);
+        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapView_map))
+                .getMap();
+//        Marker hamburg = map.addMarker(new MarkerOptions().position(HAMBURG)
+//                .title("Hamburg"));
+//        Marker kiel = map.addMarker(new MarkerOptions()
+//                .position(KIEL)
+//                .title("Kiel")
+//                .snippet("Kiel is cool")
+//                .icon(BitmapDescriptorFactory
+//                        .fromResource(R.drawable.ic_launcher)));
 
-        map = mapView.getMap();
-        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        // Map settings
-        map.getUiSettings().setMyLocationButtonEnabled(false);
-        map.getUiSettings().setCompassEnabled(false);
-        map.getUiSettings().setZoomControlsEnabled(false);
-
-        try {
-            MapsInitializer.initialize(this);
-        }
-        catch (Exception e) {
-            Log.d("GOOGLE PLAY SERVICES", "NOT AVAILABLE");
-        }
-
-        mapView.onResume();
+//        // Move the camera instantly to hamburg with a zoom of 15.
+//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(HAMBURG, 15));
+//
+//        // Zoom in, animating the camera.
+//        map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,11 +84,6 @@ public class MapsActivity extends FragmentActivity {
 //            }
 //        }
 //    }
-
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     */
 
     private void setUpMap() {
         map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
