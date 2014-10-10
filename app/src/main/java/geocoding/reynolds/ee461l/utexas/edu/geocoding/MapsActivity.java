@@ -2,19 +2,18 @@ package geocoding.reynolds.ee461l.utexas.edu.geocoding;
 
 import android.app.Activity;
 import android.content.Context;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -28,16 +27,14 @@ public class MapsActivity extends Activity {
     private Context context;
 
     MapView mapView;
-    String APIkey = "AIzaSyBtqkdLV8x2A4OiLymjKUGnT540r6uGJL8";
+    String APIkey = "AIzaSyCqPD0WxZJe4A6Rqy3aYBgXTDKNsJRG5Pg";
     String geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     String geocodeURLTail = "&key=";
 
     EditText addressForm;
     ImageView searchButton;
     GoogleMap map;
-
-    static final LatLng HAMBURG = new LatLng(53.558, 9.927);
-    static final LatLng KIEL = new LatLng(53.551, 9.993);
+    Marker previousMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,29 +67,29 @@ public class MapsActivity extends Activity {
         map.setMyLocationEnabled(true);
 
         //Set the map to current location
-        map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-
-            @Override
-            public void onMyLocationChange(Location location) {
-                LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
-
-                //Add a marker with an image to current location
-                map.addMarker(new MarkerOptions().position(position)
-                        .title("My location"));
-
-                //Zoom parameter is set to 14
-                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(position, 14);
-
-                //Use map.animateCamera(update) if you want moving effect
-                map.moveCamera(update);
-//                mapView.onResume();
-            }
-        });
+//        map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+//
+//            @Override
+//            public void onMyLocationChange(Location location) {
+//                LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
+//
+//                //Add a marker with an image to current location
+//                map.addMarker(new MarkerOptions().position(position)
+//                        .title("My location"));
+//
+//                //Zoom parameter is set to 14
+//                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(position, 14);
+//
+//                //Use map.animateCamera(update) if you want moving effect
+//                map.moveCamera(update);
+////                mapView.onResume();
+//            }
+//        });
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!addressForm.getText().toString().equals(null)) {
+                if (!(addressForm.getText().toString() == null)) {
                     searchAddress();
                 }
                 else {
@@ -148,12 +145,26 @@ public class MapsActivity extends Activity {
             JSONArray results = locationData.getJSONArray("results");
 
             JSONObject geometry = results.getJSONObject(0).getJSONObject("geometry");
+            String formattedAddress = results.getJSONObject(0).getString("formatted_address");
             JSONObject location = geometry.getJSONObject("location");
 
-            String latitude = location.getString("lat");
-            String longitude = location.getString("lng");
+            Double latitude = location.getDouble("lat");
+            Double longitude = location.getDouble("lng");
+            LatLng coordinates = new LatLng(latitude, longitude);
 
-            Toast.makeText(this, latitude + " " + longitude, Toast.LENGTH_SHORT).show();
+            Marker newMarker = map.addMarker(new MarkerOptions().position(coordinates)
+                .title(formattedAddress));
+
+            // Move the camera instantly to hamburg with a zoom of 15.
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15));
+
+            // Zoom in, animating the camera.
+            map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+
+            if (previousMarker != null) {
+                previousMarker.remove();
+            }
+            previousMarker = newMarker;
         }
         catch(InterruptedException e){
 

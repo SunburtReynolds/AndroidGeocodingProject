@@ -43,12 +43,4 @@ public class SearchAddress extends AsyncTask<String, Integer, JSONObject> {
 
         return null;
     }
-
-    @Override
-    protected void onPostExecute(JSONObject result) {
-
-        // TODO: do something to main thread GUI
-
-    }
-
 }
