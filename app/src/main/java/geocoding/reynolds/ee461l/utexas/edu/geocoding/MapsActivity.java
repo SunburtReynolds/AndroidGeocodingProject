@@ -1,12 +1,15 @@
 package geocoding.reynolds.ee461l.utexas.edu.geocoding;
 
 import android.app.Activity;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
@@ -58,6 +61,29 @@ public class MapsActivity extends Activity {
 //
 //        // Zoom in, animating the camera.
 //        map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+
+        //Enable GPS
+        map.setMyLocationEnabled(true);
+
+        //Set the map to current location
+        map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+
+            @Override
+            public void onMyLocationChange(Location location) {
+                LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
+
+                //Add a marker with an image to current location
+                map.addMarker(new MarkerOptions().position(position)
+                        .title("My location"));
+
+                //Zoom parameter is set to 14
+                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(position, 14);
+
+                //Use map.animateCamera(update) if you want moving effect
+                map.moveCamera(update);
+//                mapView.onResume();
+            }
+        });
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
