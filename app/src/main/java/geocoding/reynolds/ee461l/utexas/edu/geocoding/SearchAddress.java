@@ -1,7 +1,6 @@
 package geocoding.reynolds.ee461l.utexas.edu.geocoding;
 
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 /**
  * Created by stephen on 10/9/14.
@@ -44,6 +42,13 @@ public class SearchAddress extends AsyncTask<String, Integer, JSONObject> {
         }
 
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(JSONObject result) {
+
+        // TODO: do something to main thread GUI
+
     }
 
 }

@@ -1,6 +1,7 @@
 package geocoding.reynolds.ee461l.utexas.edu.geocoding;
 
 import android.app.Activity;
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
@@ -24,8 +25,10 @@ import java.util.concurrent.ExecutionException;
 
 public class MapsActivity extends Activity {
 
+    private Context context;
+
     MapView mapView;
-    String APIkey = "AIzaSyALzlkKlBlVv95h4zG7laoB1Gwqg71Smjw";
+    String APIkey = "AIzaSyBtqkdLV8x2A4OiLymjKUGnT540r6uGJL8";
     String geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     String geocodeURLTail = "&key=";
 
@@ -38,6 +41,7 @@ public class MapsActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        context = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // setUpMapIfNeeded();
@@ -88,7 +92,12 @@ public class MapsActivity extends Activity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                searchAddress();
+                if (!addressForm.getText().toString().equals(null)) {
+                    searchAddress();
+                }
+                else {
+                    Toast.makeText(context, "You must enter an address", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
