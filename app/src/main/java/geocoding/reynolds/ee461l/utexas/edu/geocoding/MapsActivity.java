@@ -26,6 +26,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -38,6 +44,8 @@ public class MapsActivity extends Activity {
     String geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     String geocodeURLTail = "&key=";
     String mapType = "normal";
+
+    String searchesFile = "searches";
     ArrayList<String> recentSearches = new ArrayList<String> ();
 
     EditText addressForm;
@@ -46,6 +54,8 @@ public class MapsActivity extends Activity {
     Marker previousMarker;
     TextView vLongitude;
     TextView vLatitude;
+
+    FileOutputStream searchesOutput = null;
 
 
     @Override
@@ -86,6 +96,41 @@ public class MapsActivity extends Activity {
 //            }
 //        });
 
+        // Get past searches
+        FileInputStream input = null;
+        BufferedReader reader = null;
+
+        // If an input file exists, load the arraylist with recent searches
+        if(fileExistence(searchesFile)) {
+            try {
+                input = openFileInput(searchesFile);
+                reader = new BufferedReader(new InputStreamReader(input));
+
+                String search = reader.readLine();
+                while (search != null) {
+                    recentSearches.add(search);
+                    search = reader.readLine();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    reader.close();
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // Get the output stream to write the searches to a file
+        try{
+            searchesOutput = openFileOutput(searchesFile, Context.MODE_PRIVATE);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,6 +138,13 @@ public class MapsActivity extends Activity {
 
                 if (!(address == null)) {
                     recentSearches.add(address);
+
+                    try {
+                        searchesOutput.write((address + "\n").getBytes());
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
 
                     searchAddress();
                 }
@@ -107,6 +159,17 @@ public class MapsActivity extends Activity {
     protected void onResume() {
         super.onResume();
 //        setUpMapIfNeeded();
+    }
+
+    @Override
+    protected void onDestroy(){
+        try {
+            searchesOutput.close();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -292,4 +355,10 @@ public class MapsActivity extends Activity {
 
         }
     }
+
+    public boolean fileExistence(String fname){
+        File file = getBaseContext().getFileStreamPath(fname);
+        return file.exists();
+    }
+
 }
