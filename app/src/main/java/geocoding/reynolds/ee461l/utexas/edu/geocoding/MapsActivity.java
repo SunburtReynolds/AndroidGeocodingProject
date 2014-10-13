@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MapsActivity extends Activity {
@@ -43,10 +44,9 @@ public class MapsActivity extends Activity {
     String APIkey = "AIzaSyCqPD0WxZJe4A6Rqy3aYBgXTDKNsJRG5Pg";
     String geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     String geocodeURLTail = "&key=";
-    String mapType = "normal";
 
     String searchesFile = "searches";
-    ArrayList<String> recentSearches = new ArrayList<String> ();
+    List<String> recentSearches = new ArrayList<String>();
 
     EditText addressForm;
     ImageView searchButton;
@@ -75,26 +75,6 @@ public class MapsActivity extends Activity {
 
         //Enable GPS
         map.setMyLocationEnabled(true);
-
-        //Set the map to current location
-//        map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-//
-//            @Override
-//            public void onMyLocationChange(Location location) {
-//                LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
-//
-//                //Add a marker with an image to current location
-//                map.addMarker(new MarkerOptions().position(position)
-//                        .title("My location"));
-//
-//                //Zoom parameter is set to 14
-//                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(position, 14);
-//
-//                //Use map.animateCamera(update) if you want moving effect
-//                map.moveCamera(update);
-////                mapView.onResume();
-//            }
-//        });
 
         // Get past searches
         FileInputStream input = null;
