@@ -1,11 +1,17 @@
 package geocoding.reynolds.ee461l.utexas.edu.geocoding;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class MapsActivity extends Activity {
@@ -30,11 +37,16 @@ public class MapsActivity extends Activity {
     String APIkey = "AIzaSyCqPD0WxZJe4A6Rqy3aYBgXTDKNsJRG5Pg";
     String geocodeURL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     String geocodeURLTail = "&key=";
+    String mapType = "normal";
+    ArrayList<String> recentSearches = new ArrayList<String> ();
 
     EditText addressForm;
     ImageView searchButton;
     GoogleMap map;
     Marker previousMarker;
+    TextView vLongitude;
+    TextView vLatitude;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,23 +57,11 @@ public class MapsActivity extends Activity {
 
         addressForm = (EditText) findViewById(R.id.editText_addressForm);
         searchButton = (ImageView) findViewById(R.id.imageView_search);
+        vLatitude = (TextView) findViewById(R.id.textView_latitude);
+        vLongitude = (TextView) findViewById(R.id.textView_longitude);
 
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.mapView_map))
                 .getMap();
-//        Marker hamburg = map.addMarker(new MarkerOptions().position(HAMBURG)
-//                .title("Hamburg"));
-//        Marker kiel = map.addMarker(new MarkerOptions()
-//                .position(KIEL)
-//                .title("Kiel")
-//                .snippet("Kiel is cool")
-//                .icon(BitmapDescriptorFactory
-//                        .fromResource(R.drawable.ic_launcher)));
-
-//        // Move the camera instantly to hamburg with a zoom of 15.
-//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(HAMBURG, 15));
-//
-//        // Zoom in, animating the camera.
-//        map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
 
         //Enable GPS
         map.setMyLocationEnabled(true);
@@ -89,7 +89,11 @@ public class MapsActivity extends Activity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!(addressForm.getText().toString() == null)) {
+                String address = addressForm.getText().toString();
+
+                if (!(address == null)) {
+                    recentSearches.add(address);
+
                     searchAddress();
                 }
                 else {
@@ -103,6 +107,28 @@ public class MapsActivity extends Activity {
     protected void onResume() {
         super.onResume();
 //        setUpMapIfNeeded();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_mapType:
+                openAlertMapType();
+                return true;
+            case R.id.menu_recentSearches:
+                openAlertRecentSearches();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 //    private void setUpMapIfNeeded() {
@@ -121,7 +147,6 @@ public class MapsActivity extends Activity {
         map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
     }
 
-    // TODO: test and add functionality
     public void searchAddress() {
 
         // Replaces all the spaces with +'s
@@ -151,6 +176,9 @@ public class MapsActivity extends Activity {
             Double latitude = location.getDouble("lat");
             Double longitude = location.getDouble("lng");
             LatLng coordinates = new LatLng(latitude, longitude);
+
+            vLatitude.setText(location.getString("lat"));
+            vLongitude.setText(location.getString("lng"));
 
             Marker newMarker = map.addMarker(new MarkerOptions().position(coordinates)
                 .title(formattedAddress));
@@ -195,5 +223,73 @@ public class MapsActivity extends Activity {
         */
 
 //        Toast.makeText(this, addressString, Toast.LENGTH_SHORT).show();
+    }
+
+    public void openAlertMapType() {
+        AlertDialog mapTypeDialog;
+
+        // Strings to Show In Dialog with Radio Buttons
+        final CharSequence[] mapTypes = {"Normal","Satellite","Hybrid","Terrain"};
+
+        // Creating and Building the Dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose your map type:");
+        builder.setSingleChoiceItems(mapTypes, -1, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+
+
+                switch (item) {
+                    case 0:
+                        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        break;
+                    case 1:
+                        map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                        break;
+                    case 2:
+                        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                        break;
+                    case 3:
+                        map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                        break;
+                    default:
+                        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+                }
+                dialog.dismiss();
+            }
+        });
+        mapTypeDialog = builder.create();
+        mapTypeDialog.show();
+    }
+
+    public void openAlertRecentSearches() {
+        AlertDialog recentSearchesDialog;
+
+        // Required to have a char sequence; convert array list
+        CharSequence[] recentSearchesCS = recentSearches.toArray(new CharSequence[recentSearches.size()]);
+
+        if (recentSearchesCS.length > 0) {
+
+            // Creating and Building the Dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Recent searches:");
+            builder.setItems(recentSearchesCS, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    // populate the edit text with the selected search
+                    String selectedItem = recentSearches.get(item);
+                    addressForm.setText(selectedItem);
+
+                    dialog.dismiss();
+                }
+            });
+            recentSearchesDialog = builder.create();
+            recentSearchesDialog.show();
+
+        }
+        else {
+
+            Toast.makeText(this, "No previous searches.", Toast.LENGTH_SHORT).show();
+
+        }
     }
 }
